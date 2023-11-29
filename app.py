@@ -1,7 +1,8 @@
 import json
 from urllib import request, parse
 import requests
-import tqdm
+from tqdm import tqdm
+import os
 
 
 class InferlessPythonModel:
@@ -10,6 +11,8 @@ class InferlessPythonModel:
         if file_name is None:
             file_name = url.split("/")[-1]
 
+        full_path = os.path.join(folder_name, file_name)
+
         response = requests.get(url, stream=True)
         response.raise_for_status()
 
@@ -17,7 +20,7 @@ class InferlessPythonModel:
         block_size = 1024
 
         progress_bar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
-        with open(file_name, "wb") as file:
+        with open(full_path, "wb") as file:
             for data in response.iter_content(block_size):
                 progress_bar.update(len(data))
                 file.write(data)
@@ -29,7 +32,7 @@ class InferlessPythonModel:
     def initialize(self):
         InferlessPythonModel.download_file(
             "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-            "models/checkpoints",
+            folder_name="models/checkpoints",
         )
 
     def infer(self, inputs):
