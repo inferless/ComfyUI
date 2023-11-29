@@ -3,6 +3,8 @@ from urllib import request, parse
 import requests
 from tqdm import tqdm
 import os
+import asyncio
+from main import start_server
 
 
 class InferlessPythonModel:
@@ -39,7 +41,7 @@ class InferlessPythonModel:
         workflow = inputs["workflow"]
         workflow_file_name = f"{workflow}.json"
 
-        prompt = json.loads(open(f"worflows/{workflow_file_name}"))
+        prompt = json.loads(open(f"workflows/{workflow_file_name}"))
         print("Prompt: ", prompt)
         p = {"prompt": prompt}
 
@@ -57,6 +59,7 @@ class InferlessPythonModel:
 
 if __name__ == "__main__":
     model = InferlessPythonModel()
+    asyncio.run(start_server())
     model.initialize()
     model.infer({"workflow": "txt_2_img.json"})
     model.finalize()
