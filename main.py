@@ -182,8 +182,8 @@ async def start_server():
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    server = server.PromptServer(loop)
-    q = execution.PromptQueue(server)
+    server_instance = server_instance.PromptServer(loop)
+    q = execution.PromptQueue(server_instance)
 
     extra_model_paths_config_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), "extra_model_paths.yaml"
@@ -199,15 +199,15 @@ async def start_server():
 
     cuda_malloc_warning()
 
-    server.add_routes()
-    hijack_progress(server)
+    server_instance.add_routes()
+    hijack_progress(server_instance)
 
     threading.Thread(
         target=prompt_worker,
         daemon=True,
         args=(
             q,
-            server,
+            server_instance,
         ),
     ).start()
 
@@ -250,7 +250,7 @@ async def start_server():
     try:
         loop.run_until_complete(
             run(
-                server,
+                server_instance,
                 address=args.listen,
                 port=args.port,
                 verbose=not args.dont_print_server,
