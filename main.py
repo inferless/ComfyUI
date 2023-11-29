@@ -182,7 +182,7 @@ async def start_server():
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    server_instance = server_instance.PromptServer(loop)
+    server_instance = server.PromptServer(loop)
     q = execution.PromptQueue(server_instance)
 
     extra_model_paths_config_path = os.path.join(
