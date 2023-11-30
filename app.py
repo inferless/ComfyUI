@@ -47,6 +47,7 @@ class InferlessPythonModel:
         workflow_file_name = f"{workflow}"
 
         prompt = json.loads(open(f"workflows/{workflow_file_name}").read())
+        prompt["6"]["inputs"]["text"] = "masterpiece best quality penguin"
         p = {"prompt": prompt}
 
         data = json.dumps(p).encode("utf-8")
@@ -54,8 +55,11 @@ class InferlessPythonModel:
         req = request.Request("http://127.0.0.1:8188/prompt", data=data)
         request.urlopen(req)
 
-        response = requests.get("http://127.0.0.1:8188/queue")
-        print(response.json())
+        task_completed = False
+        while task_completed != True:
+            response = requests.get("http://127.0.0.1:8188/queue")
+            if response.json()["queue_running"] == []:
+                task_completed = True
 
         return None
 
