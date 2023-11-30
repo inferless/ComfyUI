@@ -16,6 +16,12 @@ class InferlessPythonModel:
             file_name = url.split("/")[-1]
 
         print("***************************************************", flush=True)
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        __parent_location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__), "..")
+        )
+        print("Location: ", __location__)
+        print("Parent Location: ", __parent_location__)
         print(os.getcwd(), flush=True)
         items = os.listdir(os.getcwd())
 
