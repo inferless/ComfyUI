@@ -16,12 +16,12 @@ class InferlessPythonModel:
             file_name = url.split("/")[-1]
 
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        full_path = os.path.join(__location__, folder_name, file_name)
+        # full_path = os.path.join(__location__, folder_name, file_name)
 
-        # if True:
-        #     full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
-        # else:
-        #     full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
+        if True:
+            full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
+        else:
+            full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -38,6 +38,9 @@ class InferlessPythonModel:
 
         if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
             print("ERROR, something went wrong")
+
+        target_location = os.path.join(__location__, folder_name, file_name)
+        os.symlink(full_path, target_location)
 
     @staticmethod
     def convert_image_to_base64(image_path):
