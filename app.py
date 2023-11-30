@@ -75,8 +75,9 @@ class InferlessPythonModel:
         workflow_file_name = f"{workflow}.json"
 
         params = json.loads(inputs["parameters"])
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-        prompt = json.loads(open(f"workflows/{workflow_file_name}").read())
+        prompt = json.loads(open(f"{__location__}/workflows/{workflow_file_name}").read())
         prompt["6"]["inputs"]["text"] = params["prompt"]
         p = {"prompt": prompt}
 
