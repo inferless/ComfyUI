@@ -98,6 +98,8 @@ class InferlessPythonModel:
         image_path = f"{__location__}/output/ComfyUI_00001_.png"
         base64_image = InferlessPythonModel.process_single_image(image_path)
 
+        file_name = os.path.join(__location__, "main.py")
+        folder_name = os.path.join(__location__, "models/checkpoints")
         target_location = os.path.join(__location__, folder_name, file_name)
         os.unlink(target_location)
 
