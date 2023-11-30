@@ -100,7 +100,7 @@ class InferlessPythonModel:
 
         return {"generated_image": base64_image}
 
-    def finalize(self):
+    def finalize(self, args):
         print("**********************************************", flush=True)
         self.process.terminate()
         target_location = os.path.join(__location__, folder_name, file_name)
