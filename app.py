@@ -16,6 +16,8 @@ class InferlessPythonModel:
             file_name = url.split("/")[-1]
 
         print("***************************************************", flush=True)
+        import time
+        time.sleep(10)
         print(os.getcwd(), flush=True)
         items = os.listdir(os.getcwd())
 
