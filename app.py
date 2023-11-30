@@ -15,27 +15,13 @@ class InferlessPythonModel:
         if file_name is None:
             file_name = url.split("/")[-1]
 
-        print("***************************************************", flush=True)
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        __parent_location__ = os.path.realpath(
-            os.path.join(os.getcwd(), os.path.dirname(__file__), "..")
-        )
-        print("Location: ", __location__)
-        print("Parent Location: ", __parent_location__)
-        print(os.getcwd(), flush=True)
-        items = os.listdir(os.getcwd())
+        full_path = os.path.join(__location__, folder_name, file_name)
 
-        # Filter out only the files from the list
-        files = [item for item in items if os.path.isfile(os.path.join(os.getcwd(), item))]
-
-        # Print the list of files
-        for file in files:
-            print(file, flush=True)
-
-        if True:
-            full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
-        else:
-            full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
+        # if True:
+        #     full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
+        # else:
+        #     full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -72,12 +58,16 @@ class InferlessPythonModel:
 
     def initialize(self):
         import subprocess
-        import time
-        time.sleep(10)
-        self.process = subprocess.Popen(["python3.10", "main.py"])
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        file_name = os.path.join(__location__, "main.py")
+        folder_name = os.path.join(__location__, "models/checkpoints")
+        print("File Name: ", file_name, flush=True)
+        print("Folder Name: ", folder_name, flush=True)
+        
+        self.process = subprocess.Popen(["python3.10", file_name])
         InferlessPythonModel.download_file(
             "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-            folder_name="models/checkpoints",
+            folder_name=folder_name,
         )
 
     def infer(self, inputs):
