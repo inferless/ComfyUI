@@ -25,8 +25,11 @@ class InferlessPythonModel:
         # Print the list of files
         for file in files:
             print(file, flush=True)
-        
-        full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
+
+        if True:
+            full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
+        else:
+            full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
