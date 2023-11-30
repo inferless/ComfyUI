@@ -33,10 +33,12 @@ class InferlessPythonModel:
     def initialize(self):
         import subprocess
         self.process = subprocess.Popen(["python3.10", "main.py"])
-        InferlessPythonModel.download_file(
-            "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-            folder_name="models/checkpoints",
-        )
+        import time
+        time.sleep(10)
+        #InferlessPythonModel.download_file(
+        #    "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
+        #    folder_name="models/checkpoints",
+        #)
 
     def infer(self, inputs):
         workflow = inputs["workflow"]
@@ -47,10 +49,14 @@ class InferlessPythonModel:
 
         data = json.dumps(p).encode("utf-8")
 
+        print("Here 0")
         req = request.Request("http://127.0.0.1:8188/prompt", data=data)
-        resp = request.urlopen(req)
-        resp_data = resp.read()
-        print("Response: ", resp_data)
+        request.urlopen(req)
+        # resp_data = resp.read()
+        # print("Response: ", resp_data)
+        import time
+        print("Here")
+        time.sleep(10)
         return None
 
     def finalize(self):
