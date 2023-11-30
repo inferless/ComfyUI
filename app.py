@@ -102,6 +102,8 @@ class InferlessPythonModel:
 
     def finalize(self):
         self.process.terminate()
+        target_location = os.path.join(__location__, folder_name, file_name)
+        os.remove(target_location)
 
 
 # if __name__ == "__main__":
