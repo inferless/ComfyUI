@@ -15,11 +15,12 @@ class InferlessPythonModel:
         if file_name is None:
             file_name = url.split("/")[-1]
 
+        print("***************************************************", flush=True)
         print(os.getcwd(), flush=True)
         items = os.listdir(os.getcwd())
 
         # Filter out only the files from the list
-        files = [item for item in items if os.path.isfile(os.path.join(directory_path, item))]
+        files = [item for item in items if os.path.isfile(os.path.join(os.getcwd(), item))]
 
         # Print the list of files
         for file in files:
