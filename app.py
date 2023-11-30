@@ -4,6 +4,9 @@ import requests
 from tqdm import tqdm
 import os
 import asyncio
+import base64
+from PIL import Image
+from io import BytesIO
 
 
 class InferlessPythonModel:
@@ -30,24 +33,39 @@ class InferlessPythonModel:
         if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
             print("ERROR, something went wrong")
 
+    @staticmethod
+    def convert_image_to_base64(image_path):
+        with Image.open(image_path) as image:
+            buffered = BytesIO()
+            image.save(buffered, format="PNG")
+            return base64.b64encode(buffered.getvalue()).decode()
+
+    @staticmethod
+    def process_single_image(image_path):
+        try:
+            base64_image = InferlessPythonModel.convert_image_to_base64(image_path)
+            os.remove(image_path)  # Delete the image after conversion
+            return base64_image
+        except Exception as e:
+            print(f"Error processing {image_path}: {e}")
+            return None
+
     def initialize(self):
         import subprocess
-
         self.process = subprocess.Popen(["python3.10", "main.py"])
-        import time
-
-        time.sleep(10)
-        # InferlessPythonModel.download_file(
-        #    "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-        #    folder_name="models/checkpoints",
-        # )
+        InferlessPythonModel.download_file(
+            "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
+            folder_name="models/checkpoints",
+        )
 
     def infer(self, inputs):
         workflow = inputs["workflow"]
-        workflow_file_name = f"{workflow}"
+        workflow_file_name = f"{workflow}.json"
+
+        params = inputs["parameters"]
 
         prompt = json.loads(open(f"workflows/{workflow_file_name}").read())
-        prompt["6"]["inputs"]["text"] = "masterpiece best quality penguin"
+        prompt["6"]["inputs"]["text"] = params["prompt"]
         p = {"prompt": prompt}
 
         data = json.dumps(p).encode("utf-8")
@@ -61,7 +79,10 @@ class InferlessPythonModel:
             if response.json()["queue_running"] == []:
                 task_completed = True
 
-        return None
+        image_path = "output/ComfyUI_00001_.png"
+        base64_image = InferlessPythonModel.process_single_image(image_path)
+
+        return {"generated_image": base64_image}
 
     def finalize(self):
         self.process.terminate()
@@ -70,5 +91,5 @@ class InferlessPythonModel:
 if __name__ == "__main__":
     model = InferlessPythonModel()
     model.initialize()
-    model.infer({"workflow": "txt_2_img.json"})
+    ab = model.infer({"workflow": "txt_2_img", "parameters": {"prompt": "masterpiece image of a smart dog wearing a coat and tie and glasses"}})
     model.finalize()
