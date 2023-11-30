@@ -15,7 +15,7 @@ class InferlessPythonModel:
         if file_name is None:
             file_name = url.split("/")[-1]
 
-        full_path = os.path.join(os.getcwd(), os.path.join(folder_name, file_name))
+        full_path = os.path.join(os.getcwd(), folder_name, file_name)
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
