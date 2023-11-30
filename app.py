@@ -4,7 +4,6 @@ import requests
 from tqdm import tqdm
 import os
 import asyncio
-from main import start_server
 
 
 class InferlessPythonModel:
@@ -32,6 +31,8 @@ class InferlessPythonModel:
             print("ERROR, something went wrong")
 
     def initialize(self):
+        import subprocess
+        self.process = subprocess.Popen(["python3.10", "main.py"])
         InferlessPythonModel.download_file(
             "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
             folder_name="models/checkpoints",
@@ -39,10 +40,9 @@ class InferlessPythonModel:
 
     def infer(self, inputs):
         workflow = inputs["workflow"]
-        workflow_file_name = f"{workflow}.json"
+        workflow_file_name = f"{workflow}"
 
-        prompt = json.loads(open(f"workflows/{workflow_file_name}"))
-        print("Prompt: ", prompt)
+        prompt = json.loads(open(f"workflows/{workflow_file_name}").read())
         p = {"prompt": prompt}
 
         data = json.dumps(p).encode("utf-8")
@@ -53,13 +53,12 @@ class InferlessPythonModel:
         print("Response: ", resp_data)
         return None
 
-    def finalize(self, args):
-        pass
+    def finalize(self):
+        self.process.terminate()
 
 
 if __name__ == "__main__":
     model = InferlessPythonModel()
-    asyncio.run(start_server())
     model.initialize()
     model.infer({"workflow": "txt_2_img.json"})
     model.finalize()
