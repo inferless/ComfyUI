@@ -103,6 +103,14 @@ class InferlessPythonModel:
     def finalize(self):
         self.process.terminate()
         target_location = os.path.join(__location__, folder_name, file_name)
+        print("Trying to Remove Symlink", flush=True)
+        os.remove(target_location)
+
+        import time
+        time.sleep(10)
+
+        print("Trying again to Remove Symlink", flush=True)
+        os.unlink(target_location)
         os.remove(target_location)
 
 
