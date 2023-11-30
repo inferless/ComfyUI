@@ -15,7 +15,7 @@ class InferlessPythonModel:
         if file_name is None:
             file_name = url.split("/")[-1]
 
-        full_path = os.path.join(folder_name, file_name)
+        full_path = os.path.join(os.getcwd(), os.path.join(folder_name, file_name))
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -88,8 +88,8 @@ class InferlessPythonModel:
         self.process.terminate()
 
 
-if __name__ == "__main__":
-    model = InferlessPythonModel()
-    model.initialize()
-    ab = model.infer({"workflow": "txt_2_img", "parameters": {"prompt": "masterpiece image of a smart dog wearing a coat and tie and glasses"}})
-    model.finalize()
+# if __name__ == "__main__":
+#     model = InferlessPythonModel()
+#     model.initialize()
+#     ab = model.infer({"workflow": "txt_2_img", "parameters": {"prompt": "masterpiece image of a smart dog wearing a coat and tie and glasses"}})
+#     model.finalize()
