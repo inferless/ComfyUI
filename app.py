@@ -95,6 +95,7 @@ class InferlessPythonModel:
         return {"generated_image": base64_image}
 
     def finalize(self, args):
+        print("Finalizing", flush=True)
         self.process.terminate()
 
 
