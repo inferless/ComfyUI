@@ -22,7 +22,7 @@ To access the custom runtime window in Inferless, simply navigate to the sidebar
 Next, provide a suitable name for your custom runtime and proceed by uploading the **config.yaml** file given above. Finally, ensure you save your changes by clicking on the save button.
 
 ### Add Workflows
-You can add the `json` format of your workflow in the workflows folder. The sample `txt_2_img` is given. The name of the worfklow sent in the inputs should be same as the name of the file (without the .json extension).
+You can add the `json` format of your workflow in the workflows folder given above. The sample `txt_2_img` is given. The name of the worfklow sent in the inputs should be same as the name of the file (without the .json extension).
 
 ### Import the Model in Inferless
 Log in to your inferless account, select the workspace you want the model to be imported into and click the Add Model button.
