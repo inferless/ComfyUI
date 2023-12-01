@@ -89,7 +89,7 @@ class InferlessPythonModel:
             if response.json()["queue_running"] == []:
                 task_completed = True
 
-        image_path = f"{__location__}/output/ComfyUI_00001_.png"
+        image_path = "/var/nfs-mount/comfyUI/output/ComfyUI_00001_.png"
         base64_image = InferlessPythonModel.process_single_image(image_path)
 
         return {"generated_image": base64_image}
