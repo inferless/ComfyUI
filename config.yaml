@@ -16,3 +16,4 @@ build:
     - "tqdm"
     - "psutil"
     - "requests"
+    - "torchvision"
