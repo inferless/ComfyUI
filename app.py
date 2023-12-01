@@ -11,17 +11,11 @@ from io import BytesIO
 
 class InferlessPythonModel:
     @staticmethod
-    def download_file(url, file_name: str = None, folder_name: str = None):
+    def download_file(url, file_name: str = None):
         if file_name is None:
             file_name = url.split("/")[-1]
 
-        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        # full_path = os.path.join(__location__, folder_name, file_name)
-
-        if True:
-            full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
-        else:
-            full_path = os.path.join("/var/nfs-mount/comfyUI", folder_name, file_name)
+        full_path = os.path.join("/var/nfs-mount/comfyUI", file_name)
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -38,9 +32,6 @@ class InferlessPythonModel:
 
         if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
             print("ERROR, something went wrong")
-
-        target_location = os.path.join(__location__, folder_name, file_name)
-        os.symlink(full_path, target_location)
 
     @staticmethod
     def convert_image_to_base64(image_path):
@@ -61,16 +52,15 @@ class InferlessPythonModel:
 
     def initialize(self):
         import subprocess
-        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
         file_name = os.path.join(__location__, "main.py")
-        folder_name = os.path.join(__location__, "models/checkpoints")
-        print("File Name: ", file_name, flush=True)
-        print("Folder Name: ", folder_name, flush=True)
-        
+
         self.process = subprocess.Popen(["python3.10", file_name])
         InferlessPythonModel.download_file(
             "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt",
-            folder_name=folder_name,
         )
 
     def infer(self, inputs):
@@ -78,9 +68,13 @@ class InferlessPythonModel:
         workflow_file_name = f"{workflow}.json"
 
         params = json.loads(inputs["parameters"])
-        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
 
-        prompt = json.loads(open(f"{__location__}/workflows/{workflow_file_name}").read())
+        prompt = json.loads(
+            open(f"{__location__}/workflows/{workflow_file_name}").read()
+        )
         prompt["6"]["inputs"]["text"] = params["prompt"]
         p = {"prompt": prompt}
 
@@ -98,26 +92,10 @@ class InferlessPythonModel:
         image_path = f"{__location__}/output/ComfyUI_00001_.png"
         base64_image = InferlessPythonModel.process_single_image(image_path)
 
-        file_name = os.path.join(__location__, "main.py")
-        folder_name = os.path.join(__location__, "models/checkpoints")
-        target_location = os.path.join(__location__, folder_name, file_name)
-        os.unlink(target_location)
-
         return {"generated_image": base64_image}
 
     def finalize(self, args):
-        print("**********************************************", flush=True)
         self.process.terminate()
-        target_location = os.path.join(__location__, folder_name, file_name)
-        print("Trying to Remove Symlink", flush=True)
-        os.remove(target_location)
-
-        import time
-        time.sleep(10)
-
-        print("Trying again to Remove Symlink", flush=True)
-        os.unlink(target_location)
-        os.remove(target_location)
 
 
 # if __name__ == "__main__":
