@@ -7,6 +7,7 @@ import asyncio
 import base64
 from PIL import Image
 from io import BytesIO
+import re
 
 
 class InferlessPythonModel:
@@ -44,11 +45,26 @@ class InferlessPythonModel:
     def process_single_image(image_path):
         try:
             base64_image = InferlessPythonModel.convert_image_to_base64(image_path)
-            os.remove(image_path)  # Delete the image after conversion
+            # os.remove(image_path)  # Delete the image after conversion
             return base64_image
         except Exception as e:
             print(f"Error processing {image_path}: {e}")
             return None
+
+    @staticmethod
+    def get_final_image_name(directory):
+        pattern = re.compile(r"ComfyUI_(\d+)_\.png$")
+        max_number = 0
+
+        for filename in os.listdir(directory):
+            match = pattern.match(filename)
+            if match:
+                number = int(match.group(1))
+                max_number = max(max_number, number)
+
+        max_number += 1
+        print(f"Max number: {max_number}")
+        return f"ComfyUI_{max_number:05d}_.png"
 
     def initialize(self):
         import subprocess
@@ -94,7 +110,10 @@ class InferlessPythonModel:
                     task_completed = True
 
             print("Queue Completed", flush=True)
-            image_path = "/var/nfs-mount/comfyUI/output/ComfyUI_00001_.png"
+            final_image_name = InferlessPythonModel.get_final_image_name(
+                "/var/nfs-mount/comfyUI/output"
+            )
+            image_path = f"/var/nfs-mount/comfyUI/output/{final_image_name}"
             base64_image = InferlessPythonModel.process_single_image(image_path)
 
             return {"generated_image": base64_image}
