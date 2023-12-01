@@ -65,7 +65,6 @@ class InferlessPythonModel:
                 number = int(match.group(1))
                 max_number = max(max_number, number)
 
-        max_number += 1
         print(f"Max number: {max_number}", flush=True)
         return f"ComfyUI_{max_number:05d}_.png"
 
