@@ -13,6 +13,7 @@ import re
 class InferlessPythonModel:
     @staticmethod
     def download_file(url, file_name: str = None):
+        print("Here")
         if file_name is None:
             file_name = url.split("/")[-1]
 
