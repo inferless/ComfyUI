@@ -57,14 +57,16 @@ class InferlessPythonModel:
         pattern = re.compile(r"ComfyUI_(\d+)_\.png$")
         max_number = 0
 
+        print("*******************************", flush=True)
         for filename in os.listdir(directory):
+            print("FileName: ", filename, flush=True)
             match = pattern.match(filename)
             if match:
                 number = int(match.group(1))
                 max_number = max(max_number, number)
 
         max_number += 1
-        print(f"Max number: {max_number}")
+        print(f"Max number: {max_number}", flush=True)
         return f"ComfyUI_{max_number:05d}_.png"
 
     def initialize(self):
