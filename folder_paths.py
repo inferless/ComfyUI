@@ -76,7 +76,10 @@ folder_names_and_paths["classifiers"] = (
     {""},
 )
 
-output_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "output")
+output_directory = os.path.join("/var/nfs-mount/comfyUI", "output")
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
+
 temp_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")
 input_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "input")
 
