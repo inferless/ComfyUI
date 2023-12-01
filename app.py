@@ -64,35 +64,43 @@ class InferlessPythonModel:
         )
 
     def infer(self, inputs):
-        workflow = inputs["workflow"]
-        workflow_file_name = f"{workflow}.json"
+        try:
+            print("Infer Started", flush=True)
+            workflow = inputs["workflow"]
+            workflow_file_name = f"{workflow}.json"
 
-        params = json.loads(inputs["parameters"])
-        __location__ = os.path.realpath(
-            os.path.join(os.getcwd(), os.path.dirname(__file__))
-        )
+            params = json.loads(inputs["parameters"])
+            __location__ = os.path.realpath(
+                os.path.join(os.getcwd(), os.path.dirname(__file__))
+            )
+            print("Recieved parameters:", params, flush=True)
 
-        prompt = json.loads(
-            open(f"{__location__}/workflows/{workflow_file_name}").read()
-        )
-        prompt["6"]["inputs"]["text"] = params["prompt"]
-        p = {"prompt": prompt}
+            prompt = json.loads(
+                open(f"{__location__}/workflows/{workflow_file_name}").read()
+            )
+            prompt["6"]["inputs"]["text"] = params["prompt"]
+            p = {"prompt": prompt}
 
-        data = json.dumps(p).encode("utf-8")
+            data = json.dumps(p).encode("utf-8")
+            print("Prompt Encoding Happened", flush=True)
 
-        req = request.Request("http://127.0.0.1:8188/prompt", data=data)
-        request.urlopen(req)
+            req = request.Request("http://127.0.0.1:8188/prompt", data=data)
+            request.urlopen(req)
 
-        task_completed = False
-        while task_completed != True:
-            response = requests.get("http://127.0.0.1:8188/queue")
-            if response.json()["queue_running"] == []:
-                task_completed = True
+            task_completed = False
+            while task_completed != True:
+                response = requests.get("http://127.0.0.1:8188/queue")
+                if response.json()["queue_running"] == []:
+                    task_completed = True
 
-        image_path = "/var/nfs-mount/comfyUI/output/ComfyUI_00001_.png"
-        base64_image = InferlessPythonModel.process_single_image(image_path)
+            print("Queue Completed", flush=True)
+            image_path = "/var/nfs-mount/comfyUI/output/ComfyUI_00001_.png"
+            base64_image = InferlessPythonModel.process_single_image(image_path)
 
-        return {"generated_image": base64_image}
+            return {"generated_image": base64_image}
+        except Exception as e:
+            print(f"Error processing: {e}", flush=True)
+            return None
 
     def finalize(self, args):
         print("Finalizing", flush=True)
