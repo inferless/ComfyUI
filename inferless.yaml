@@ -39,3 +39,4 @@ optional:
   runtime_file_name: config.yaml
 model_url: https://github.com/inferless/ComfyUI.git
 provider: GITHUB
+io_schema: true
